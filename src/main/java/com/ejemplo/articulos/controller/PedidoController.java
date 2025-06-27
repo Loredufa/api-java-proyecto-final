@@ -61,22 +61,12 @@ public class PedidoController {
                     if (pedidoParcial.getEstado() != null) {
                         pedidoExistente.setEstado(pedidoParcial.getEstado());
                     }
-                    if (pedidoParcial.getDetalles() != null && !pedidoParcial.getDetalles().isEmpty()) {
-                        // Solo actualiza los detalles enviados (por id)
-                        for (PedidoDetalle detalleModif : pedidoParcial.getDetalles()) {
-                            for (PedidoDetalle detalleExistente : pedidoExistente.getDetalles()) {
-                                if (detalleExistente.getId().equals(detalleModif.getId())) {
-                                    if (detalleModif.getCantidad() != null) {
-                                        detalleExistente.setCantidad(detalleModif.getCantidad());
-                                    }
-                                    if (detalleModif.getPrecioUnitario() != null) {
-                                        detalleExistente.setPrecioUnitario(detalleModif.getPrecioUnitario());
-                                    }
-                                    if (detalleModif.getSubtotal() != null) {
-                                        detalleExistente.setSubtotal(detalleModif.getSubtotal());
-                                    }
-                                }
-                            }
+                    if (pedidoParcial.getDetalles() != null) {
+                        // Elimina todos los detalles actuales y los reemplaza por los nuevos
+                        pedidoExistente.getDetalles().clear();
+                        for (PedidoDetalle detalle : pedidoParcial.getDetalles()) {
+                            detalle.setPedido(pedidoExistente); // Asegura la relación bidireccional
+                            pedidoExistente.getDetalles().add(detalle);
                         }
                     }
                     Pedido actualizado = pedidoService.guardarPedido(pedidoExistente);
